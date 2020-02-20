@@ -11,9 +11,6 @@ import androidx.navigation.fragment.findNavController
 import com.dorokhov.jetpackapp.R
 import kotlinx.android.synthetic.main.fragment_launcher.*
 
-/**
- * A simple [Fragment] subclass.
- */
 class LauncherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
