@@ -1,7 +1,8 @@
-package com.dorokhov.jetpackapp
+package com.dorokhov.jetpackapp.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.dorokhov.jetpackapp.R
 
 class AuthActivity : AppCompatActivity() {
 
