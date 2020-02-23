@@ -12,7 +12,7 @@ import com.dorokhov.jetpackapp.R
 /**
  * A simple [Fragment] subclass.
  */
-class LoginFragment : Fragment() {
+class LoginFragment : BaseAuthFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

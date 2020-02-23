@@ -10,10 +10,9 @@ abstract class AppDatabase : RoomDatabase(){
 
     abstract fun getAuthTokenDao(): AuthTokenDao
 
-    abstract fun getAccountProperties(): AccountPropertiesDao
+    abstract fun getAccountPropertiesDao(): AccountPropertiesDao
 
     companion object {
         const val DATABASE_NAME = "app_db"
     }
-
 }

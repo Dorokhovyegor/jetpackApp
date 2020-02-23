@@ -10,7 +10,7 @@ import android.view.ViewGroup
 
 import com.dorokhov.jetpackapp.R
 
-class RegisterFragment : Fragment() {
+class RegisterFragment : BaseAuthFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

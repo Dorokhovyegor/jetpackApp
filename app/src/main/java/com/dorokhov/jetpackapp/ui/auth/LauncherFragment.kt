@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.dorokhov.jetpackapp.R
 import kotlinx.android.synthetic.main.fragment_launcher.*
 
-class LauncherFragment : Fragment() {
+class LauncherFragment : BaseAuthFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
