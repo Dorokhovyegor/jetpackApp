@@ -5,6 +5,7 @@ import com.dorokhov.jetpackapp.di.auth.AuthModule
 import com.dorokhov.jetpackapp.di.auth.AuthScope
 import com.dorokhov.jetpackapp.di.auth.AuthViewModelModule
 import com.dorokhov.jetpackapp.ui.auth.AuthActivity
+import com.dorokhov.jetpackapp.ui.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -17,4 +18,7 @@ abstract class ActivityBuildersModule {
     )
     abstract fun contributeAuthActivity(): AuthActivity
 
+
+    @ContributesAndroidInjector
+    abstract fun contributeMainActivity(): MainActivity
 }
