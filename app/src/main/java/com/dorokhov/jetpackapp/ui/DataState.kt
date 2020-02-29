@@ -1,5 +1,6 @@
 package com.dorokhov.jetpackapp.ui
 
+// оборачиваем viewState Этим классом
 data class DataState<T>(
     var error: Event<StateError>? = null,
     var loading: Loading = Loading(false),

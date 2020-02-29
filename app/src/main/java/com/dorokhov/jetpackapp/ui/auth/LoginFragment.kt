@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.models.AuthToken
+import com.dorokhov.jetpackapp.ui.auth.state.AuthStateEvent
 import com.dorokhov.jetpackapp.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -28,6 +29,10 @@ class LoginFragment : BaseAuthFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeObservers()
+
+        login_button.setOnClickListener {
+            login()
+        }
     }
 
     private fun subscribeObservers() {
@@ -42,6 +47,13 @@ class LoginFragment : BaseAuthFragment() {
                 }
             }
         })
+    }
+
+    fun login() {
+        viewModel.setStateEvent(AuthStateEvent.LoginAttemptEvent(
+            input_email.text.toString(),
+            input_password.text.toString()
+        ))
     }
 
     override fun onDestroyView() {

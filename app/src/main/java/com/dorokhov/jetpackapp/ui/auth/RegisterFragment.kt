@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.dorokhov.jetpackapp.R
+import com.dorokhov.jetpackapp.ui.auth.state.AuthStateEvent
 import com.dorokhov.jetpackapp.ui.auth.state.RegistrationFields
 import kotlinx.android.synthetic.main.fragment_register.*
 
@@ -21,10 +22,14 @@ class RegisterFragment : BaseAuthFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        register_button.setOnClickListener {
+            register()
+        }
+
         subscribeObservers()
     }
 
-    fun subscribeObservers() {
+    private fun subscribeObservers() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer {
             it.registrationFields?.let { registrationFields ->
                 registrationFields.registration_email?.let {
@@ -44,6 +49,17 @@ class RegisterFragment : BaseAuthFragment() {
                 }
             }
         })
+    }
+
+    private fun register() {
+        viewModel.setStateEvent(
+            AuthStateEvent.RegisterAttemptEvent(
+                input_email.text.toString(),
+                input_username.text.toString(),
+                input_password.text.toString(),
+                input_password_confirm.text.toString()
+            )
+        )
     }
 
     override fun onDestroyView() {

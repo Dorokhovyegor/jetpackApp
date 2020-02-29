@@ -49,12 +49,17 @@ constructor(
         when (it) {
             // just return a place holder
             is AuthStateEvent.LoginAttemptEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.attemptLogin(it.email, it.password)
             }
 
             // just return a place holder
             is AuthStateEvent.RegisterAttemptEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.attemptRegistration(
+                    it.email,
+                    it.username,
+                    it.password,
+                    it.confirm_password
+                )
             }
 
             // just return a place holder
