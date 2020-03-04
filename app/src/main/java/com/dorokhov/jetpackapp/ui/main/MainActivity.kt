@@ -2,8 +2,8 @@ package com.dorokhov.jetpackapp.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Observer
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.ui.BaseActivity
@@ -31,5 +31,13 @@ class MainActivity : BaseActivity() {
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    override fun displayProgressBar(boolean: Boolean) {
+        if (boolean) {
+            progress_bar.visibility = View.VISIBLE
+        } else {
+            progress_bar.visibility = View.GONE
+        }
     }
 }

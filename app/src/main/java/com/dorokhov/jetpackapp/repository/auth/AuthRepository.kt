@@ -110,7 +110,7 @@ constructor(
             RegistrationFields(email, username, password, confirm_password).isValidForRegistration()
 
         if (!registrationFieldsError.equals(RegistrationFields.RegistrationError.none())) {
-            returnErrorResponse(registrationFieldsError, ResponseType.Dialog())
+            return  returnErrorResponse(registrationFieldsError, ResponseType.Dialog())
         }
 
         return object : NetworkBoundResource<RegistrationResponse, AuthViewState>(
