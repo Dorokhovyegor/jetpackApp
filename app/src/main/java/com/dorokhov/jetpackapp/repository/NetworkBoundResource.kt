@@ -15,7 +15,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 
 abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
-    isNetworkAvailable: Boolean // is there a network connection?
+    isNetworkAvailable: Boolean, // is there a network connection?
+    isNetworkRequest: Boolean // is this a network request?
 ) {
 
     private val TAG = "AppDebug"
@@ -32,36 +33,47 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
                 cashedData = null
             )
         )
-        if (isNetworkAvailable) {
 
-            // корутины стартую одновременно, если первый не успеет выполнится, второй отменяет запущенную работу, как таймаут
-            coroutineScope.launch {
-                // simulate delay
-                delay(TESTING_NETWORK_DELAY)
+        if (isNetworkRequest) {
+            if (isNetworkAvailable) {
+                // корутины стартуют одновременно, если первый не успеет выполнится, второй отменяет запущенную работу, как таймаут
+                coroutineScope.launch {
+                    // simulate delay
+                    delay(TESTING_NETWORK_DELAY)
 
-                // switch context coroutine
-                withContext(Main) {
-                    var apiResponse = createCall()
-                    result.addSource(apiResponse) { response ->
-                        result.removeSource(apiResponse)
-                        coroutineScope.launch {
-                            handleNetworkCall(response)
+                    // switch context coroutine
+                    withContext(Main) {
+                        var apiResponse = createCall()
+                        result.addSource(apiResponse) { response ->
+                            result.removeSource(apiResponse)
+                            coroutineScope.launch {
+                                handleNetworkCall(response)
+                            }
+
                         }
-
                     }
                 }
-            }
 
-            GlobalScope.launch(IO) {
-                delay(Constants.NETWORK_TIMEOUT)
-                if (!job.isCompleted) {
-                    Log.e(TAG, "NetworkBoundResource: Job network timeout")
-                    job.cancel(CancellationException(UNABLE_TO_RESOLVE_HOST))
+                GlobalScope.launch(IO) {
+                    delay(Constants.NETWORK_TIMEOUT)
+                    if (!job.isCompleted) {
+                        Log.e(TAG, "NetworkBoundResource: Job network timeout")
+                        job.cancel(CancellationException(UNABLE_TO_RESOLVE_HOST))
+                    }
                 }
+            } else {
+                onErrorReturn(UNABLE_TODO_OPERATION_WO_INTERNET, true, false)
             }
-        } else {
-            onErrorReturn(UNABLE_TODO_OPERATION_WO_INTERNET, true, false)
+        } else { // если не требуется соединение с интернетом
+            coroutineScope.launch {
+                // delay for test
+                delay(Constants.TESTING_CACHE_DELAY)
+
+                // View data from cache ONLY and return
+                createCasheRequestAndReturn()
+            }
         }
+
     }
 
     suspend fun handleNetworkCall(response: GenericApiResponse<ResponseObject>?) {
@@ -141,6 +153,8 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
     }
 
     fun asLiveData() = result as LiveData<DataState<ViewStateType>>
+
+    abstract suspend fun createCasheRequestAndReturn()
 
     abstract suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ResponseObject>)
 

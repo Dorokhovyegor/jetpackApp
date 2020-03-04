@@ -64,7 +64,7 @@ constructor(
 
             // just return a place holder
             is AuthStateEvent.CheckPreviousAuthEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.checkPreviousAuthUser()
             }
         }
     }

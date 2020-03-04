@@ -1,6 +1,8 @@
 package com.dorokhov.jetpackapp.di
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -12,6 +14,7 @@ import com.dorokhov.jetpackapp.persistance.AppDatabase.Companion.DATABASE_NAME
 import com.dorokhov.jetpackapp.persistance.AuthTokenDao
 import com.dorokhov.jetpackapp.util.Constants
 import com.dorokhov.jetpackapp.util.LiveDataCallAdapterFactory
+import com.dorokhov.jetpackapp.util.PreferenceKeys
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -21,12 +24,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class AppModule{
+class AppModule {
 
     @Singleton
     @Provides
     fun provideGsonBuilder(): Gson {
-        return GsonBuilder().excludeFieldsWithoutExposeAnnotation().create() // Все поля, которые не помечены Expose будут игнорироваться
+        return GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+            .create() // Все поля, которые не помечены Expose будут игнорироваться
     }
 
     @Singleton
@@ -69,8 +73,26 @@ class AppModule{
 
     @Singleton
     @Provides
-    fun provideGlideInstance(application: Application, requestOptions: RequestOptions): RequestManager {
+    fun provideGlideInstance(
+        application: Application,
+        requestOptions: RequestOptions
+    ): RequestManager {
         return Glide.with(application)
             .setDefaultRequestOptions(requestOptions)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPrefs(application: Application): SharedPreferences {
+        return application.getSharedPreferences(
+            PreferenceKeys.APP_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPrefsEditor(sharedPreference: SharedPreferences): SharedPreferences.Editor {
+        return sharedPreference.edit()
     }
 }

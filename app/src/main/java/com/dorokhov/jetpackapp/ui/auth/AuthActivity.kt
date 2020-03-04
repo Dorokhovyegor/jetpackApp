@@ -11,6 +11,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.ui.BaseActivity
+import com.dorokhov.jetpackapp.ui.auth.state.AuthStateEvent
 import com.dorokhov.jetpackapp.ui.main.MainActivity
 import com.dorokhov.jetpackapp.viewmodels.ViewModelProviderFactory
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -31,6 +32,7 @@ class AuthActivity : BaseActivity(),
         findNavController(R.id.auth_nav_host_fragment).addOnDestinationChangedListener(this)
 
         subscribeObservers()
+        checkPreviousAuthUser()
     }
 
     fun subscribeObservers() {
@@ -59,6 +61,10 @@ class AuthActivity : BaseActivity(),
                 navAuthActivity()
             }
         })
+    }
+
+    private fun checkPreviousAuthUser() {
+        viewModel.setStateEvent(AuthStateEvent.CheckPreviousAuthEvent())
     }
 
     private fun navAuthActivity() {
