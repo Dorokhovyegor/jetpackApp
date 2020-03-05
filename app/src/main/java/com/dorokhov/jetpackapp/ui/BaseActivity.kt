@@ -18,9 +18,11 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
         dataState?.let {
             GlobalScope.launch(Main) {
                 displayProgressBar(it.loading.isLoading)
+
                 it.error?.let { errorEvent ->
                     handleStateError(errorEvent)
                 }
+
                 it.data?.let {
                     it.response?.let { responseEvent ->
                         handleStateResponse(responseEvent)
