@@ -32,7 +32,7 @@
         android:label="fragment_change_password"
         tools:layout="@layout/fragment_change_password">
         <action
-            android:id="@+id/action_changePasswordFragment_to_accountFragment"
+            android:id="@+id/action_changePasswordFragment_to_home"
             app:destination="@id/accountFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
@@ -48,7 +48,8 @@
         android:label="fragment_update_account"
         tools:layout="@layout/fragment_update_account">
         <action
-            android:id="@+id/action_updateAccountFragment_to_accountFragment"
+            android:id="@+id/action_updateAccountFragment_to_home"
+            app:destination="@id/accountFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
