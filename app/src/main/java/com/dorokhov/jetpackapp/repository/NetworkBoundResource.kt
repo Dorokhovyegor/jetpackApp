@@ -14,25 +14,30 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 
-abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
+abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>(
     isNetworkAvailable: Boolean, // is there a network connection?
-    isNetworkRequest: Boolean // is this a network request?
+    isNetworkRequest: Boolean, // is this a network request?
+    shouldLoadFromCache: Boolean // should be cached data be loaded?
 ) {
 
     private val TAG = "AppDebug"
-
     protected val result = MediatorLiveData<DataState<ViewStateType>>()
     protected lateinit var job: CompletableJob
     protected lateinit var coroutineScope: CoroutineScope
 
     init {
+
         setJob(initNewJob())
-        setValue(
-            DataState.loading(
-                true,
-                cashedData = null
-            )
-        )
+        setValue(DataState.loading(true, cashedData = null))
+
+        if (shouldLoadFromCache) {
+            val dbSource = loadFromCache()
+            result.addSource(dbSource) {
+                result.removeSource(dbSource)
+                setValue(DataState.loading(true, cashedData = it))
+            }
+        }
+
 
         if (isNetworkRequest) {
             if (isNetworkAvailable) {
@@ -73,7 +78,6 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
                 createCasheRequestAndReturn()
             }
         }
-
     }
 
     suspend fun handleNetworkCall(response: GenericApiResponse<ResponseObject>?) {
@@ -160,6 +164,12 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
 
     abstract fun createCall(): LiveData<GenericApiResponse<ResponseObject>>
 
+    abstract fun loadFromCache(): LiveData<ViewStateType>
+
+    abstract suspend fun updateLocalDb(cacheObject: CacheObject?)
+
     abstract fun setJob(job: Job)
+
+
 
 }

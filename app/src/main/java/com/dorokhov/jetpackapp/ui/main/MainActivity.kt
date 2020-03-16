@@ -1,5 +1,6 @@
 package com.dorokhov.jetpackapp.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import com.dorokhov.jetpackapp.ui.main.blog.UpdateBlogFragment
 import com.dorokhov.jetpackapp.ui.main.blog.ViewBlogFragment
 import com.dorokhov.jetpackapp.util.BottomNavController
 import com.dorokhov.jetpackapp.util.setUpNavigation
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -41,6 +43,8 @@ class MainActivity : BaseActivity(), BottomNavController.NavGraphProvider,
             R.navigation.nav_blog
         }
 
+
+
         R.id.nav_account -> {
             R.navigation.nav_account
         }
@@ -52,7 +56,8 @@ class MainActivity : BaseActivity(), BottomNavController.NavGraphProvider,
     }
 
     override fun onGraphChange() {
-        TODO("what needs to happen when nav graph changes?")
+        // "what needs to happen when nav graph changes?'w
+        expandAppBar()
     }
 
     override fun onReselectNavItem(navController: NavController, fragment: Fragment) =
@@ -123,5 +128,9 @@ class MainActivity : BaseActivity(), BottomNavController.NavGraphProvider,
         } else {
             progress_bar.visibility = View.GONE
         }
+    }
+
+    override fun expandAppBar() {
+        findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true)
     }
 }

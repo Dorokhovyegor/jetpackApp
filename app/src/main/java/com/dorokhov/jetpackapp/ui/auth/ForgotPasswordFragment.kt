@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ForgotPasswordFragment : BaseAuthFragment(), DataStateChangeListener {
+class ForgotPasswordFragment : BaseAuthFragment() {
 
     val TAG = this.javaClass.canonicalName
 
@@ -111,9 +111,6 @@ class ForgotPasswordFragment : BaseAuthFragment(), DataStateChangeListener {
         )
     }
 
-    override fun onDataStateChange(dataState: DataState<*>?) {
-
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -153,5 +150,4 @@ class ForgotPasswordFragment : BaseAuthFragment(), DataStateChangeListener {
         }
 
     }
-
 }

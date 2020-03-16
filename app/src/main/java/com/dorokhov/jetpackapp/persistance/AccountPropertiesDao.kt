@@ -20,7 +20,10 @@ interface AccountPropertiesDao {
     fun searchByPk(pk: Int): LiveData<AccountProperties>
 
     @Query("SELECT * FROM account_properties WHERE email = :email")
-    fun searchByEmail(email: String): AccountProperties?
+    suspend fun searchByEmail(email: String): AccountProperties?
+
+    @Query("UPDATE account_properties SET email = :email, username = :username WHERE pk= :pk")
+    fun updateAccountProperties(pk: Int, email: String, username: String)
 
 }
 

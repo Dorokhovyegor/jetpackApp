@@ -24,7 +24,7 @@ class ViewBlogFragment : BaseBlogFragment(){
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        TODO("check if user is author of blog post")
+        // "check if user is author of blog post"
         val isAuthorOfBlogPost = true
         if (isAuthorOfBlogPost) {
             inflater.inflate(R.menu.edit_view_menu, menu)
@@ -33,7 +33,7 @@ class ViewBlogFragment : BaseBlogFragment(){
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        TODO("check if user is author of blog post")
+        //"check if user is author of blog post"
         val isAuthorOfBlogPost = true
         if (isAuthorOfBlogPost) {
             when (item.itemId) {

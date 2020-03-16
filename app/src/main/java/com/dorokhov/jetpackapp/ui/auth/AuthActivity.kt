@@ -14,6 +14,7 @@ import com.dorokhov.jetpackapp.ui.BaseActivity
 import com.dorokhov.jetpackapp.ui.auth.state.AuthStateEvent
 import com.dorokhov.jetpackapp.ui.main.MainActivity
 import com.dorokhov.jetpackapp.viewmodels.ViewModelProviderFactory
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_auth.*
 import javax.inject.Inject
 
@@ -87,5 +88,9 @@ class AuthActivity : BaseActivity(),
         arguments: Bundle?
     ) {
         viewModel.cancelActiveJobs()
+    }
+
+    override fun expandAppBar() {
+       // ignore
     }
 }
