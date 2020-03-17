@@ -11,8 +11,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.dorokhov.jetpackapp.R
-import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.ui.DataStateChangeListener
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.BlogViewModel
 import com.dorokhov.jetpackapp.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject

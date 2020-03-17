@@ -1,9 +1,8 @@
-package com.dorokhov.jetpackapp.ui.main.blog
+package com.dorokhov.jetpackapp.ui.main.blog.viewmodel
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.bumptech.glide.RequestManager
-import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.repository.main.BlogRepository
 import com.dorokhov.jetpackapp.session.SessionManager
 import com.dorokhov.jetpackapp.ui.BaseViewModel
@@ -36,8 +35,9 @@ constructor(
             is BlogStateEvent.BlogSearchEvent -> {
                 return sessionManager.cashedToken.value?.let { authToken ->
                     blogRepository.searchBlogPosts(
-                        authToken,
-                        viewState.value!!.blogFields.searchQuery
+                        authToken = authToken,
+                        query = getSearchQuery(),
+                        page = getPage()
                     )
                 } ?: return AbsentLiveData.create()
             }
@@ -45,37 +45,14 @@ constructor(
                 return AbsentLiveData.create()
             }
             is BlogStateEvent.None -> {
-                return AbsentLiveData.create()
+                return object : LiveData<DataState<BlogViewState>>() {
+                    override fun onActive() {
+                        super.onActive()
+                        value = DataState.data(null, null)
+                    }
+                }
             }
         }
-    }
-
-    fun setQuery(query: String) {
-        val update = getCurrentNewStateOrNew()
-        /* if (query.equals(update.blogFields.searchQuery)) { // тоже самое нам не интеерсно
-             return
-         }*/
-        update.blogFields.searchQuery = query
-        _viewState.value = update
-    }
-
-    fun setBlogListData(blogPost: List<BlogPost>) {
-        val update = getCurrentNewStateOrNew()
-        update.blogFields.blogList =
-            blogPost // я не буду проверять на эквивалентность, за меня это потом сделает dif utils
-        _viewState.value = update
-    }
-
-    fun setBlogPost(blogPost: BlogPost) {
-        val update = getCurrentNewStateOrNew()
-        update.viewBlogFields.blogPost = blogPost
-        _viewState.value = update
-    }
-
-    fun setIsAuthorOfBLogPost(isAuthorOfBlogPost: Boolean) {
-        val update = getCurrentNewStateOrNew()
-        update.viewBlogFields.isAuthorOfBlogPost = isAuthorOfBlogPost
-        _viewState.value = update
     }
 
     fun cancelActiveJobs() {

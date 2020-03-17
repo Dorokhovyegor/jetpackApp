@@ -3,7 +3,7 @@ package com.dorokhov.jetpackapp.di.main
 import androidx.lifecycle.ViewModel
 import com.dorokhov.jetpackapp.di.ViewModelKey
 import com.dorokhov.jetpackapp.ui.main.account.AccountViewModel
-import com.dorokhov.jetpackapp.ui.main.blog.BlogViewModel
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.BlogViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

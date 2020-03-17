@@ -14,6 +14,7 @@ import com.dorokhov.jetpackapp.session.SessionManager
 import com.dorokhov.jetpackapp.ui.DataState
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogViewState
 import com.dorokhov.jetpackapp.util.ApiSuccessResponse
+import com.dorokhov.jetpackapp.util.Constants.Companion.PAGINATION_PAGE_SIZE
 import com.dorokhov.jetpackapp.util.DateUtils
 import com.dorokhov.jetpackapp.util.GenericApiResponse
 import kotlinx.coroutines.Dispatchers.IO
@@ -33,7 +34,8 @@ constructor(
 
     fun searchBlogPosts(
         authToken: AuthToken,
-        query: String
+        query: String,
+        page: Int
     ): LiveData<DataState<BlogViewState>> {
         return object : NetworkBoundResource<BlogListSearchResponse, List<BlogPost>, BlogViewState>(
             sessionManager.isConnectedToTheInternet(),
@@ -45,6 +47,10 @@ constructor(
                 withContext(Main) {
                     // finish by viewing db cache
                     result.addSource(loadFromCache()) { viewState ->
+                        viewState.blogFields.isQueryInProgress = false
+                        if (page * PAGINATION_PAGE_SIZE > viewState.blogFields.blogList.size) {
+                            viewState.blogFields.isQueryExhausted = true
+                        }
                         onCompleteJob(
                             DataState.data(
                                 viewState, null
@@ -77,19 +83,24 @@ constructor(
             override fun createCall(): LiveData<GenericApiResponse<BlogListSearchResponse>> {
                 return openApiMainService.searchListBlogPosts(
                     "Token ${authToken.token!!}",
-                    query
+                    query,
+                    page
                 )
             }
 
             override fun loadFromCache(): LiveData<BlogViewState> {
-                return blogPostDao.getAllBlogPosts()
+                return blogPostDao.getAllBlogPosts(
+                    query,
+                    page
+                )
                     .switchMap {
                         object : LiveData<BlogViewState>() {
                             override fun onActive() {
                                 super.onActive()
                                 value = BlogViewState(
                                     BlogViewState.BlogFields(
-                                        it
+                                        blogList = it,
+                                        isQueryInProgress = true
                                     )
                                 )
                             }

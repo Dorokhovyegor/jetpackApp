@@ -9,7 +9,6 @@ import com.dorokhov.jetpackapp.ui.auth.state.AuthStateEvent
 import com.dorokhov.jetpackapp.ui.auth.state.AuthViewState
 import com.dorokhov.jetpackapp.ui.auth.state.LoginFields
 import com.dorokhov.jetpackapp.ui.auth.state.RegistrationFields
-import com.dorokhov.jetpackapp.util.AbsentLiveData
 import javax.inject.Inject
 
 class AuthViewModel
@@ -24,7 +23,7 @@ constructor(
             return
         }
         update.registrationFields = registrationFields
-        _viewState.value = update
+        setViewState(update)
     }
 
     fun setLoginFields(loginFields: LoginFields) {
@@ -33,7 +32,7 @@ constructor(
             return
         }
         update.loginFields = loginFields
-        _viewState.value = update
+        setViewState(update)
     }
 
     fun setAuthToken(authToken: AuthToken) {
@@ -42,7 +41,7 @@ constructor(
             return
         }
         update.authToken = authToken
-        _viewState.value = update
+        setViewState(update)
     }
 
     override fun handleStateEvent(it: AuthStateEvent): LiveData<DataState<AuthViewState>> {
@@ -68,7 +67,7 @@ constructor(
             }
 
             is AuthStateEvent.None -> {
-                return object: LiveData<DataState<AuthViewState>>() {
+                return object : LiveData<DataState<AuthViewState>>() {
                     override fun onActive() {
                         super.onActive()
                         value = DataState.data(null, null)
