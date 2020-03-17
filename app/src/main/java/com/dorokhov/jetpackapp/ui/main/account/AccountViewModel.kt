@@ -23,18 +23,36 @@ constructor(
         return AccountViewState()
     }
 
-    override fun handleStateEvent(it: AccountStateEvent): LiveData<DataState<AccountViewState>> {
-        when (it) {
+    override fun handleStateEvent(stateEvent: AccountStateEvent): LiveData<DataState<AccountViewState>> {
+        when (stateEvent) {
             is GetAccountPropertiesEvent -> {
                 return sessionManager.cashedToken.value?.let { authToken ->
                     accountRepository.getAccountProperties(authToken)
-                }?: AbsentLiveData.create()
+                } ?: AbsentLiveData.create()
             }
             is UpdatedAccountPropertiesEvent -> {
-                return AbsentLiveData.create()
+                return sessionManager.cashedToken.value?.let { authToken ->
+                    authToken.account_pk?.let { pk ->
+                        accountRepository.saveAccountProperties(
+                            authToken,
+                            AccountProperties(
+                                pk,
+                                stateEvent.email,
+                                stateEvent.userName
+                            )
+                        )
+                    }
+                } ?: AbsentLiveData.create()
             }
             is ChangePasswordEvent -> {
-                return AbsentLiveData.create()
+                return sessionManager.cashedToken.value?.let { authToken ->
+                    accountRepository.updatePassword(
+                        authToken,
+                        stateEvent.currentPassword,
+                        stateEvent.newPassword,
+                        stateEvent.confirmNewPassword
+                    )
+                } ?: AbsentLiveData.create()
             }
             is None -> {
                 return AbsentLiveData.create()

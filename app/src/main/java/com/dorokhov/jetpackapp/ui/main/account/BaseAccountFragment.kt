@@ -55,4 +55,6 @@ abstract class BaseAccountFragment : DaggerFragment() {
             Log.e(TAG, "$context must implement DataStateChangeListener")
         }
     }
+
+
 }
