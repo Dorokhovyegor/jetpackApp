@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.bumptech.glide.RequestManager
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.ui.DataStateChangeListener
@@ -19,6 +20,9 @@ import javax.inject.Inject
 abstract class BaseBlogFragment : DaggerFragment() {
 
    val TAG = "YegorDebug"
+
+    @Inject
+    lateinit var requestManager: RequestManager
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory

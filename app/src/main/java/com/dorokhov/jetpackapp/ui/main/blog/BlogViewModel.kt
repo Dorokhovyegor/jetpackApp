@@ -41,6 +41,9 @@ constructor(
                     )
                 } ?: return AbsentLiveData.create()
             }
+            is BlogStateEvent.CheckAuthorOfBlogPost -> {
+                return AbsentLiveData.create()
+            }
             is BlogStateEvent.None -> {
                 return AbsentLiveData.create()
             }
@@ -49,9 +52,9 @@ constructor(
 
     fun setQuery(query: String) {
         val update = getCurrentNewStateOrNew()
-       /* if (query.equals(update.blogFields.searchQuery)) { // тоже самое нам не интеерсно
-            return
-        }*/
+        /* if (query.equals(update.blogFields.searchQuery)) { // тоже самое нам не интеерсно
+             return
+         }*/
         update.blogFields.searchQuery = query
         _viewState.value = update
     }
@@ -60,6 +63,18 @@ constructor(
         val update = getCurrentNewStateOrNew()
         update.blogFields.blogList =
             blogPost // я не буду проверять на эквивалентность, за меня это потом сделает dif utils
+        _viewState.value = update
+    }
+
+    fun setBlogPost(blogPost: BlogPost) {
+        val update = getCurrentNewStateOrNew()
+        update.viewBlogFields.blogPost = blogPost
+        _viewState.value = update
+    }
+
+    fun setIsAuthorOfBLogPost(isAuthorOfBlogPost: Boolean) {
+        val update = getCurrentNewStateOrNew()
+        update.viewBlogFields.isAuthorOfBlogPost = isAuthorOfBlogPost
         _viewState.value = update
     }
 
