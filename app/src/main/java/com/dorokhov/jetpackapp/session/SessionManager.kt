@@ -79,39 +79,13 @@ constructor(
     }
 
     // todo how to translate it from async to sync?
-    fun isConnectedToTheInternet(): Boolean {
-        var result = false
-        val connectivityManager =
-            application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val networkCapabilities = connectivityManager.activeNetwork ?: return false
-            val actNtw =
-                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
-            result = when {
-                actNtw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                actNtw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                actNtw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                val builder = NetworkRequest.Builder()
-                connectivityManager.registerNetworkCallback(builder.build(), object : ConnectivityManager.NetworkCallback() {
-                        override fun onLost(network: Network) {
-                            result = false
-                        }
-
-                        override fun onAvailable(network: Network) {
-                            result = true
-                        }
-                    })
-
-            } catch (e: Exception) {
-                result = false
-            }
+    fun isConnectedToTheInternet(): Boolean{
+        val cm = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        try{
+            return cm.activeNetworkInfo.isConnected
+        }catch (e: Exception){
+            Log.e(TAG, "isConnectedToTheInternet: ${e.message}")
         }
-        return result
+        return false
     }
-
 }

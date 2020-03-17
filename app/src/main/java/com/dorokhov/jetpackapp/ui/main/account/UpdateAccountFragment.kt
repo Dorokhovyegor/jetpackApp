@@ -50,6 +50,7 @@ class UpdateAccountFragment : BaseAccountFragment(){
             input_email.text.toString(),
             input_username.text.toString()
         ))
+        stateChangeListener.hideSoftKeyBoard()
     }
 
     // создает меню

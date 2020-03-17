@@ -11,7 +11,6 @@ object NetworkStateHolder : NetworkState {
 
     private lateinit var holder: NetworkStateImp
 
-
     override val isConnected: Boolean
         get() = holder.isConnected
     override val network: Network?
@@ -40,5 +39,4 @@ object NetworkStateHolder : NetworkState {
         //register to network events
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), NetworkCallbackImp(holder))
     }
-
 }
