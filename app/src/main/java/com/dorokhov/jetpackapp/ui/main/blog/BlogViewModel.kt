@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 
 /**
-* https://www.youtube.com/watch?v=MAlSjtxy5ak лол
-* */
+ * https://www.youtube.com/watch?v=MAlSjtxy5ak лол
+ * */
 
 class BlogViewModel
 @Inject
@@ -34,7 +34,12 @@ constructor(
     override fun handleStateEvent(it: BlogStateEvent): LiveData<DataState<BlogViewState>> {
         when (it) {
             is BlogStateEvent.BlogSearchEvent -> {
-                return AbsentLiveData.create()
+                return sessionManager.cashedToken.value?.let { authToken ->
+                    blogRepository.searchBlogPosts(
+                        authToken,
+                        viewState.value!!.blogFields.searchQuery
+                    )
+                } ?: return AbsentLiveData.create()
             }
             is BlogStateEvent.None -> {
                 return AbsentLiveData.create()
@@ -44,16 +49,17 @@ constructor(
 
     fun setQuery(query: String) {
         val update = getCurrentNewStateOrNew()
-        if (query.equals(update.blogFields.searchQuery)) { // тоже самое нам не интеерсно
+       /* if (query.equals(update.blogFields.searchQuery)) { // тоже самое нам не интеерсно
             return
-        }
+        }*/
         update.blogFields.searchQuery = query
         _viewState.value = update
     }
 
     fun setBlogListData(blogPost: List<BlogPost>) {
         val update = getCurrentNewStateOrNew()
-        update.blogFields.blogList = blogPost // я не буду проверять на эквивалентность, за меня это потом сделает dif utils
+        update.blogFields.blogList =
+            blogPost // я не буду проверять на эквивалентность, за меня это потом сделает dif utils
         _viewState.value = update
     }
 

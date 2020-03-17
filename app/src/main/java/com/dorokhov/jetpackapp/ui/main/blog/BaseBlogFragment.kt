@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 abstract class BaseBlogFragment : DaggerFragment() {
 
-    val TAG: String = "AppDebug"
+   val TAG = "YegorDebug"
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
