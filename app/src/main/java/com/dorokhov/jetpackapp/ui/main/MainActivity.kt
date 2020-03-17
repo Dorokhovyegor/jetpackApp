@@ -12,10 +12,13 @@ import androidx.navigation.NavController
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.ui.BaseActivity
 import com.dorokhov.jetpackapp.ui.auth.AuthActivity
+import com.dorokhov.jetpackapp.ui.main.account.BaseAccountFragment
 import com.dorokhov.jetpackapp.ui.main.account.ChangePasswordFragment
 import com.dorokhov.jetpackapp.ui.main.account.UpdateAccountFragment
+import com.dorokhov.jetpackapp.ui.main.blog.BaseBlogFragment
 import com.dorokhov.jetpackapp.ui.main.blog.UpdateBlogFragment
 import com.dorokhov.jetpackapp.ui.main.blog.ViewBlogFragment
+import com.dorokhov.jetpackapp.ui.main.create_blog.BaseCreateBlogFragment
 import com.dorokhov.jetpackapp.util.BottomNavController
 import com.dorokhov.jetpackapp.util.setUpNavigation
 import com.google.android.material.appbar.AppBarLayout
@@ -43,8 +46,6 @@ class MainActivity : BaseActivity(), BottomNavController.NavGraphProvider,
             R.navigation.nav_blog
         }
 
-
-
         R.id.nav_account -> {
             R.navigation.nav_account
         }
@@ -58,6 +59,26 @@ class MainActivity : BaseActivity(), BottomNavController.NavGraphProvider,
     override fun onGraphChange() {
         // "what needs to happen when nav graph changes?'w
         expandAppBar()
+        cancelActiveJob()
+    }
+
+    private fun cancelActiveJob() {
+        val fragments = bottomNavController.fragmentManager
+            .findFragmentById(bottomNavController.containerId)
+            ?.childFragmentManager
+            ?.fragments
+
+        if (fragments != null) {
+            for (fragment in fragments) {
+                when (fragment) {
+                    is BaseAccountFragment -> fragment.cancelActiveJobs()
+                    is BaseBlogFragment -> fragment.cancelActiveJobs()
+                    is BaseCreateBlogFragment -> fragment.cancelActiveJobs()
+                }
+            }
+        }
+
+        displayProgressBar(false)
     }
 
     override fun onReselectNavItem(navController: NavController, fragment: Fragment) =

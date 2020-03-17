@@ -7,6 +7,7 @@ import com.dorokhov.jetpackapp.api.main.OpenApiMainService
 import com.dorokhov.jetpackapp.models.AccountProperties
 import com.dorokhov.jetpackapp.models.AuthToken
 import com.dorokhov.jetpackapp.persistance.AccountPropertiesDao
+import com.dorokhov.jetpackapp.repository.JobManager
 import com.dorokhov.jetpackapp.repository.NetworkBoundResource
 import com.dorokhov.jetpackapp.session.SessionManager
 import com.dorokhov.jetpackapp.ui.DataState
@@ -27,9 +28,7 @@ constructor(
     val openApiMainService: OpenApiMainService,
     val accountPropertiesDao: AccountPropertiesDao,
     val sessionManager: SessionManager
-) {
-    val TAG = this.javaClass.canonicalName
-    private var repositoryJob: Job? = null
+): JobManager("AccountRepository") {
 
     fun getAccountProperties(authToken: AuthToken): LiveData<DataState<AccountViewState>> {
         return object :
@@ -66,10 +65,11 @@ constructor(
                 withContext(Main) {
                     // finish by viewing the db cache
                     result.addSource(loadFromCache()) { viewState ->
-                        DataState.data(
+                        onCompleteJob( DataState.data(
                             data = viewState,
                             response = null
-                        )
+                        ))
+
                     }
                 }
             }
@@ -86,8 +86,7 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("getAccountProperties", job)
             }
 
         }.asLiveData()
@@ -145,8 +144,7 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("saveAccountProperties", job)
             }
         }.asLiveData()
     }
@@ -201,15 +199,12 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("updatePassword", job)
             }
         }.asLiveData()
     }
 
-    fun cancelActiveJobs() {
-        println("$TAG: ${"Cancel job"}")
-    }
+
 
 }
 

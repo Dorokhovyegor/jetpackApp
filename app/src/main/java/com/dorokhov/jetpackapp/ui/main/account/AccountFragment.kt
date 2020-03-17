@@ -32,12 +32,12 @@ class AccountFragment : BaseAccountFragment() {
         logout_button.setOnClickListener {
             viewModel.logOut()
         }
-
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
+            println("$TAG: AccountFragment до обработки ${dataState}")
             stateChangeListener.onDataStateChange(dataState)
             dataState?.let {
                 it.data?.let { data ->
@@ -56,7 +56,7 @@ class AccountFragment : BaseAccountFragment() {
         viewModel.viewState.observe(viewLifecycleOwner, Observer {viewState ->
             viewState?.let {
                 it.accountProperties?.let {
-                    Log.d(TAG, "AccountFragment, ViewState ${it}")
+                    println("$TAG: AccountFragment, ViewState ${it}")
                     setAccountDataFields(it)
                 }
             }

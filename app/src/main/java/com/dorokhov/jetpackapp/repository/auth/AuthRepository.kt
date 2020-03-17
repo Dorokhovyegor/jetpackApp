@@ -10,6 +10,7 @@ import com.dorokhov.jetpackapp.models.AccountProperties
 import com.dorokhov.jetpackapp.models.AuthToken
 import com.dorokhov.jetpackapp.persistance.AccountPropertiesDao
 import com.dorokhov.jetpackapp.persistance.AuthTokenDao
+import com.dorokhov.jetpackapp.repository.JobManager
 import com.dorokhov.jetpackapp.repository.NetworkBoundResource
 import com.dorokhov.jetpackapp.session.SessionManager
 import com.dorokhov.jetpackapp.ui.DataState
@@ -34,12 +35,7 @@ constructor(
     val sessionManager: SessionManager,
     val sharedPrefs: SharedPreferences,
     val sharedPrefsEditor: SharedPreferences.Editor
-) {
-
-    val TAG = this.javaClass.canonicalName
-
-
-    private var repositoryJob: Job? = null
+) : JobManager("AuthRepository") {
 
     fun attemptLogin(email: String, password: String): LiveData<DataState<AuthViewState>> {
         var loginError = LoginFields(email, password).isValidForLogin()
@@ -124,8 +120,7 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("attemptLogin", job)
             }
         }.asLiveData()
 
@@ -147,12 +142,6 @@ constructor(
             }
         }
     }
-
-    fun cancelActiveJob() {
-        println("$TAG: Cancelling on-going job")
-        repositoryJob?.cancel()
-    }
-
 
     fun attemptRegistration(
         email: String,
@@ -242,8 +231,7 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("attemptRegistration", job)
             }
         }.asLiveData()
 
@@ -318,8 +306,7 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                repositoryJob?.cancel()
-                repositoryJob = job
+                addJob("checkPreviousAuthUser", job)
             }
         }.asLiveData()
     }

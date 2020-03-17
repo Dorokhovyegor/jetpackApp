@@ -27,7 +27,6 @@ abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>(
     protected lateinit var coroutineScope: CoroutineScope
 
     init {
-
         setJob(initNewJob())
         setValue(DataState.loading(true, cashedData = null))
 
@@ -68,7 +67,6 @@ abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>(
         coroutineScope.launch {
             // simulate delay
             delay(TESTING_NETWORK_DELAY)
-
             // switch context coroutine
             withContext(Main) {
                 val apiResponse = createCall()
