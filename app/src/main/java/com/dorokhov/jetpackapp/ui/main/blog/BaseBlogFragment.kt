@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.dorokhov.jetpackapp.R
+import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.ui.DataStateChangeListener
 import com.dorokhov.jetpackapp.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
@@ -57,4 +58,5 @@ abstract class BaseBlogFragment : DaggerFragment() {
             Log.e(TAG, "$context must implement DataStateChangeListener")
         }
     }
+
 }

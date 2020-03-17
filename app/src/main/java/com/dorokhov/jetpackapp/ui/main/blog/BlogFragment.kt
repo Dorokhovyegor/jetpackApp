@@ -6,12 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.dorokhov.jetpackapp.R
+import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogStateEvent
+import com.dorokhov.jetpackapp.util.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_blog.*
+import javax.inject.Inject
 
 
-class BlogFragment : BaseBlogFragment() {
+class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
+
+    @Inject
+    lateinit var requestManager: RequestManager
+
+    private lateinit var recyclerAdapter: BlogListAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,12 +35,9 @@ class BlogFragment : BaseBlogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        goViewBlogFragment.setOnClickListener {
-            findNavController().navigate(R.id.action_blogFragment_to_viewBlogFragment)
-        }
         subscribeObservers()
         executeSearch()
+        initRecyclerView()
     }
 
     private fun executeSearch() {
@@ -55,8 +64,49 @@ class BlogFragment : BaseBlogFragment() {
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             println("$TAG: BlogFragment, ViewState ${viewState}")
+            if (viewState != null) {
+                recyclerAdapter.submitList(
+                    list = viewState.blogFields.blogList,
+                    isQueryExhausted = true
+                )
+            }
         })
 
     }
 
+    private fun initRecyclerView() {
+        blog_post_recyclerview.apply {
+            layoutManager = LinearLayoutManager(this@BlogFragment.context)
+            val topSpacingItemDecoration = TopSpacingItemDecoration(30)
+            removeItemDecoration(topSpacingItemDecoration)
+            addItemDecoration(topSpacingItemDecoration)
+            recyclerAdapter = BlogListAdapter(
+                requestManager = requestManager,
+                interaction = this@BlogFragment
+            )
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+                    if (lastPosition == recyclerAdapter.itemCount.minus(1)) {
+                        println("$TAG: BlogFragment attempting to load next page ...")
+                        // todo load next page using viewModel
+                    }
+                }
+            })
+
+            adapter = recyclerAdapter
+        }
+    }
+
+    override fun onItemSelected(position: Int, item: BlogPost) {
+        println("$TAG: itemClick: position: ${position}, blogInfo ${item}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // can leak memory
+        blog_post_recyclerview.adapter = null
+    }
 }
