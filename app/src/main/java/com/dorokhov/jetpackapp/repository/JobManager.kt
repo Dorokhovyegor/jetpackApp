@@ -5,8 +5,8 @@ import kotlinx.coroutines.Job
 open class JobManager(
     private val className: String
 ) {
-    val TAG = this.javaClass.canonicalName
-
+    val TAG = "YegorDebug"
+    
     private val jobs: HashMap<String, Job> = HashMap()
 
     fun addJob(methodName: String, job: Job) {

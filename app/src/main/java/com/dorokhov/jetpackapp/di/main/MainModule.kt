@@ -2,7 +2,10 @@ package com.dorokhov.jetpackapp.di.main
 
 import com.dorokhov.jetpackapp.api.main.OpenApiMainService
 import com.dorokhov.jetpackapp.persistance.AccountPropertiesDao
+import com.dorokhov.jetpackapp.persistance.AppDatabase
+import com.dorokhov.jetpackapp.persistance.BlogPostDao
 import com.dorokhov.jetpackapp.repository.main.AccountRepository
+import com.dorokhov.jetpackapp.repository.main.BlogRepository
 import com.dorokhov.jetpackapp.session.SessionManager
 import dagger.Module
 import dagger.Provides
@@ -19,7 +22,7 @@ class MainModule {
 
     @MainScope
     @Provides
-    fun providerAccountRepository(
+    fun provideAccountRepository(
         openApiMainService: OpenApiMainService,
         accountPropertiesDao: AccountPropertiesDao,
         sessionManager: SessionManager
@@ -31,6 +34,21 @@ class MainModule {
         )
     }
 
+    @MainScope
+    @Provides
+    fun provideBlogPostDao(db: AppDatabase): BlogPostDao {
+        return db.getBlogPostDao()
+    }
+
+    @MainScope
+    @Provides
+    fun provideBlogRepository(
+        openApiMainService: OpenApiMainService,
+        blogPostDao: BlogPostDao,
+        sessionManager: SessionManager
+    ): BlogRepository {
+        return BlogRepository(openApiMainService, blogPostDao, sessionManager)
+    }
 
 
 }
