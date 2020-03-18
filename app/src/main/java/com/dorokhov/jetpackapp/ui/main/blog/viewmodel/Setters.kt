@@ -32,12 +32,26 @@ fun BlogViewModel.setQueryExhausted(isExhausted: Boolean) {
 
 fun BlogViewModel.setQueryInProgress(isInProgress: Boolean) {
     val update = getCurrentNewStateOrNew()
-    update.blogFields. isQueryInProgress = isInProgress
+    update.blogFields.isQueryInProgress = isInProgress
     setViewState(update)
 }
 
 fun BlogViewModel.setIsAuthorOfBLogPost(isAuthorOfBlogPost: Boolean) {
     val update = getCurrentNewStateOrNew()
     update.viewBlogFields.isAuthorOfBlogPost = isAuthorOfBlogPost
+    setViewState(update)
+}
+
+fun BlogViewModel.setBlogFilter(filter: String?) {
+    filter?.let {
+        val update = getCurrentNewStateOrNew()
+        update.blogFields.filter = filter
+        setViewState(update)
+    }
+}
+
+fun BlogViewModel.setBlogOrder(order: String) {
+    val update = getCurrentNewStateOrNew()
+    update.blogFields.order = order
     setViewState(update)
 }

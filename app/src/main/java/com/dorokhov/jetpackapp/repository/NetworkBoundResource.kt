@@ -75,7 +75,6 @@ abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>(
                     coroutineScope.launch {
                         handleNetworkCall(response)
                     }
-
                 }
             }
         }

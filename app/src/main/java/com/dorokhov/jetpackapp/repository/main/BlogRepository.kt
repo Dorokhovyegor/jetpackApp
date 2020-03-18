@@ -8,6 +8,7 @@ import com.dorokhov.jetpackapp.api.main.network_responses.BlogListSearchResponse
 import com.dorokhov.jetpackapp.models.AuthToken
 import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.persistance.BlogPostDao
+import com.dorokhov.jetpackapp.persistance.returnOrderedBlogQuery
 import com.dorokhov.jetpackapp.repository.JobManager
 import com.dorokhov.jetpackapp.repository.NetworkBoundResource
 import com.dorokhov.jetpackapp.session.SessionManager
@@ -35,6 +36,7 @@ constructor(
     fun searchBlogPosts(
         authToken: AuthToken,
         query: String,
+        filterAndOrder: String,
         page: Int
     ): LiveData<DataState<BlogViewState>> {
         return object : NetworkBoundResource<BlogListSearchResponse, List<BlogPost>, BlogViewState>(
@@ -84,13 +86,15 @@ constructor(
                 return openApiMainService.searchListBlogPosts(
                     "Token ${authToken.token!!}",
                     query,
+                    filterAndOrder,
                     page
                 )
             }
 
             override fun loadFromCache(): LiveData<BlogViewState> {
-                return blogPostDao.getAllBlogPosts(
+                return blogPostDao.returnOrderedBlogQuery(
                     query,
+                    filterAndOrder,
                     page
                 )
                     .switchMap {
