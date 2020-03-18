@@ -10,11 +10,34 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener {
+abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener, UICommunicationListener {
 
     protected var TAG = "AppDebug"
     @Inject
     lateinit var sessionManager: SessionManager
+
+    override fun onUIMessageReceived(uiMessage: UIMessage) {
+        when (uiMessage.uiMessageType) {
+            is UIMessageType.AreYouSureDialog -> {
+                areYouSureDialog(
+                    uiMessage.message,
+                    uiMessage.uiMessageType.callBack
+                )
+            }
+
+            is UIMessageType.Toast -> {
+                displayToast(uiMessage.message)
+            }
+
+            is UIMessageType.Dialog -> {
+                displayInfoDialog(uiMessage.message)
+            }
+
+            is UIMessageType.None -> {
+                println("$TAG: ${uiMessage.message}")
+            }
+        }
+    }
 
     override fun onDataStateChange(dataState: DataState<*>?) {
         dataState?.let {

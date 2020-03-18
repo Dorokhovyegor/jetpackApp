@@ -6,10 +6,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.models.BlogPost
+import com.dorokhov.jetpackapp.ui.AreYouSureCallBack
+import com.dorokhov.jetpackapp.ui.UIMessage
+import com.dorokhov.jetpackapp.ui.UIMessageType
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogStateEvent
 import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.isAuthorOfBlogPost
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.removeDeletedBlogPost
 import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.setIsAuthorOfBLogPost
 import com.dorokhov.jetpackapp.util.DateUtils
+import com.dorokhov.jetpackapp.util.SuccessHandling.Companion.SUCCESS_BLOG_DELETED
 import kotlinx.android.synthetic.main.fragment_view_blog.*
 
 class ViewBlogFragment : BaseBlogFragment() {
@@ -31,8 +36,26 @@ class ViewBlogFragment : BaseBlogFragment() {
         stateChangeListener.expandAppBar()
 
         delete_button?.setOnClickListener {
-            deleteBlogPost()
+            confirmDeleteRequest()
         }
+    }
+
+    private fun confirmDeleteRequest() {
+        val callBack: AreYouSureCallBack = object: AreYouSureCallBack {
+            override fun proceed() {
+                deleteBlogPost()
+            }
+
+            override fun cancel() {
+                //ignore
+            }
+        }
+        uiCommunicationListener.onUIMessageReceived(
+            UIMessage(
+                getString(R.string.are_you_sure),
+                UIMessageType.AreYouSureDialog(callBack)
+            )
+        )
     }
 
     private fun checkIsAuthorOfBlogPost() {
@@ -48,6 +71,13 @@ class ViewBlogFragment : BaseBlogFragment() {
                     viewModel.setIsAuthorOfBLogPost(
                         viewState.viewBlogFields.isAuthorOfBlogPost
                     )
+                }
+
+                data.response?.peekContent()?.let { response ->
+                    if (response.message.equals(SUCCESS_BLOG_DELETED)) {
+                        viewModel.removeDeletedBlogPost()
+                        findNavController().popBackStack()
+                    }
                 }
             }
         })
