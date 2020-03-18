@@ -121,7 +121,7 @@ class BlogListAdapter(
         if (differ.currentList.get(position).pk > -1) {
             return BLOG_ITEM
         }
-        return differ.currentList.get(position).pk // -1
+        return NO_MORE_RESULTS // -1
     }
 
     fun submitList(list: List<BlogPost>?, isQueryExhausted: Boolean) {

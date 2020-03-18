@@ -29,6 +29,10 @@ class ViewBlogFragment : BaseBlogFragment() {
         subscribeObservers()
         checkIsAuthorOfBlogPost()
         stateChangeListener.expandAppBar()
+
+        delete_button?.setOnClickListener {
+            deleteBlogPost()
+        }
     }
 
     private fun checkIsAuthorOfBlogPost() {
@@ -80,11 +84,14 @@ class ViewBlogFragment : BaseBlogFragment() {
         super.onCreateOptionsMenu(menu, inflater)
 
         // "check if user is author of blog post"
-
         if (viewModel.isAuthorOfBlogPost()) {
             inflater.inflate(R.menu.edit_view_menu, menu)
         }
 
+    }
+
+    private fun deleteBlogPost() {
+        viewModel.setStateEvent(BlogStateEvent.DeleteBlogPostEvent())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

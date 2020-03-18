@@ -56,6 +56,14 @@ constructor(
                    )
                } ?: return AbsentLiveData.create()
             }
+            is BlogStateEvent.DeleteBlogPostEvent -> {
+                return sessionManager.cashedToken.value?.let { authToken ->
+                    blogRepository.deleteBlogPost(
+                        authToken = authToken,
+                        blogPost = getBlogPost()
+                    )
+                } ?: return AbsentLiveData.create()
+            }
             is BlogStateEvent.None -> {
                 return object : LiveData<DataState<BlogViewState>>() {
                     override fun onActive() {
