@@ -247,23 +247,18 @@ class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction,
                     if (selectedOrder.text.toString().equals(getString(R.string.filter_desc))) {
                         order = "-"
                     }
-
                     // step 4: save to shared preferences and view model
                     viewModel.saveFilterOptions(filter, order).let {
                         viewModel.setBlogFilter(filter)
                         viewModel.setBlogOrder(order)
                         onBlogSearchOrFilter()
                     }
-
                     dialog.dismiss()
                 }
-
                 view.findViewById<TextView>(R.id.negative_button).setOnClickListener {
                     dialog.dismiss()
                 }
-
                 dialog.show()
-
             }
 
         }
