@@ -2,6 +2,7 @@ package com.dorokhov.jetpackapp.ui.main.blog
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.dorokhov.jetpackapp.R
@@ -10,9 +11,7 @@ import com.dorokhov.jetpackapp.ui.AreYouSureCallBack
 import com.dorokhov.jetpackapp.ui.UIMessage
 import com.dorokhov.jetpackapp.ui.UIMessageType
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogStateEvent
-import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.isAuthorOfBlogPost
-import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.removeDeletedBlogPost
-import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.setIsAuthorOfBLogPost
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.*
 import com.dorokhov.jetpackapp.util.DateUtils
 import com.dorokhov.jetpackapp.util.SuccessHandling.Companion.SUCCESS_BLOG_DELETED
 import kotlinx.android.synthetic.main.fragment_view_blog.*
@@ -139,6 +138,15 @@ class ViewBlogFragment : BaseBlogFragment() {
     }
 
     fun navUpdateBlogFragment() {
-        findNavController().navigate(R.id.action_viewBlogFragment_to_updateBlogFragment)
+        try {
+            viewModel.setUpdateBlogFields(
+                viewModel.getBlogPost().title,
+                viewModel.getBlogPost().body,
+                viewModel.getBlogPost().image.toUri()
+            )
+            findNavController().navigate(R.id.action_viewBlogFragment_to_updateBlogFragment)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

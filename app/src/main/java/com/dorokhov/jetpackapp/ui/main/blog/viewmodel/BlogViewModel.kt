@@ -13,6 +13,8 @@ import com.dorokhov.jetpackapp.ui.main.blog.state.BlogViewState
 import com.dorokhov.jetpackapp.util.AbsentLiveData
 import com.dorokhov.jetpackapp.util.PreferenceKeys.Companion.BLOG_FILTER
 import com.dorokhov.jetpackapp.util.PreferenceKeys.Companion.BLOG_ORDER
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 
@@ -61,6 +63,17 @@ constructor(
                     blogRepository.deleteBlogPost(
                         authToken = authToken,
                         blogPost = getBlogPost()
+                    )
+                } ?: return AbsentLiveData.create()
+            }
+            is BlogStateEvent.UpdatedBlogPostEvent -> {
+                return sessionManager.cashedToken.value?.let { authToken ->
+                    blogRepository.updateBlogPost(
+                        authToken = authToken,
+                        slug = getSlug(),
+                        title = RequestBody.create(MediaType.parse("text/plain"), it.title),
+                        body = RequestBody.create(MediaType.parse("text/plain"), it.body),
+                        image = it.image
                     )
                 } ?: return AbsentLiveData.create()
             }

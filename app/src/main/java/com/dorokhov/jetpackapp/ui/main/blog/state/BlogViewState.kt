@@ -1,5 +1,6 @@
 package com.dorokhov.jetpackapp.ui.main.blog.state
 
+import android.net.Uri
 import com.dorokhov.jetpackapp.models.BlogPost
 import com.dorokhov.jetpackapp.persistance.BlogQueryUtils.Companion.BLOG_ORDER_ASC
 import com.dorokhov.jetpackapp.persistance.BlogQueryUtils.Companion.ORDER_BY_ASC_DATE_UPDATED
@@ -7,10 +8,10 @@ import com.dorokhov.jetpackapp.persistance.BlogQueryUtils.Companion.ORDER_BY_ASC
 data class BlogViewState(
     // BlogFragment vars
     var blogFields: BlogFields = BlogFields(),
-
     // ViewBlogFragment vars
-    var viewBlogFields: ViewBlogFields = ViewBlogFields()
+    var viewBlogFields: ViewBlogFields = ViewBlogFields(),
     // UpdateBlogFragment vars
+    var updateBlogFields: UpdateBlogFields = UpdateBlogFields()
 ) {
     data class BlogFields(
         var blogList: List<BlogPost> = ArrayList<BlogPost>(),
@@ -25,5 +26,11 @@ data class BlogViewState(
     data class ViewBlogFields(
         var blogPost: BlogPost? = null,
         var isAuthorOfBlogPost: Boolean = false
+    )
+
+    data class UpdateBlogFields(
+        var updateBlogTitle: String? = null,
+        var updateBlogBody: String? = null,
+        var updatedImageUri: Uri? = null
     )
 }

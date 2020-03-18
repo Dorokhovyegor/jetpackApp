@@ -1,10 +1,14 @@
 package com.dorokhov.jetpackapp.api.main
 
 import androidx.lifecycle.LiveData
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dorokhov.jetpackapp.api.GenericResponse
+import com.dorokhov.jetpackapp.api.main.network_responses.BlogCreateUpdateResponse
 import com.dorokhov.jetpackapp.api.main.network_responses.BlogListSearchResponse
 import com.dorokhov.jetpackapp.models.AccountProperties
 import com.dorokhov.jetpackapp.util.GenericApiResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface OpenApiMainService {
@@ -50,4 +54,14 @@ interface OpenApiMainService {
         @Header("Authorization") authorization: String,
         @Path("slug") slug: String
     ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @Multipart
+    @PUT("blog/{slug}/update")
+    fun updateBlog(
+        @Header("Authorization") authorization: String,
+        @Path("slug") slug: String,
+        @Part("title") title: RequestBody,
+        @Part("body") body: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): LiveData<GenericApiResponse<BlogCreateUpdateResponse>>
 }

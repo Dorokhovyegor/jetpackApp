@@ -1,5 +1,6 @@
 package com.dorokhov.jetpackapp.ui.main.blog.viewmodel
 
+import android.net.Uri
 import com.dorokhov.jetpackapp.models.BlogPost
 
 fun BlogViewModel.setQuery(query: String) {
@@ -66,4 +67,19 @@ fun BlogViewModel.removeDeletedBlogPost() {
         }
     }
     setBlogListData(list)
+}
+
+fun BlogViewModel.setUpdateBlogFields(
+    title:String?,
+    body: String?,
+    uri: Uri?
+) {
+    val update = getCurrentNewStateOrNew()
+    val updateBlogFields = update.updateBlogFields
+    title?.let { updateBlogFields.updateBlogTitle }
+    body?.let { updateBlogFields.updateBlogBody }
+    uri?.let { updateBlogFields.updatedImageUri }
+
+    update.updateBlogFields = updateBlogFields
+    setViewState(update)
 }

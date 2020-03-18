@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
 import com.dorokhov.jetpackapp.api.GenericResponse
 import com.dorokhov.jetpackapp.api.main.OpenApiMainService
+import com.dorokhov.jetpackapp.api.main.network_responses.BlogCreateUpdateResponse
 import com.dorokhov.jetpackapp.api.main.network_responses.BlogListSearchResponse
 import com.dorokhov.jetpackapp.models.AuthToken
 import com.dorokhov.jetpackapp.models.BlogPost
@@ -20,13 +21,14 @@ import com.dorokhov.jetpackapp.ui.main.blog.state.BlogViewState
 import com.dorokhov.jetpackapp.util.*
 import com.dorokhov.jetpackapp.util.Constants.Companion.PAGINATION_PAGE_SIZE
 import com.dorokhov.jetpackapp.util.ErrorHandling.Companion.ERROR_UNKNOWN
-import com.dorokhov.jetpackapp.util.SuccessHandling.Companion.RESPONSE_NO_PERMISSION_TO_EDIT
 import com.dorokhov.jetpackapp.util.SuccessHandling.Companion.SUCCESS_BLOG_DELETED
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class BlogRepository
@@ -162,14 +164,16 @@ constructor(
                         isAuthor = true
                     }
 
-                    onCompleteJob(DataState.data(
-                        data = BlogViewState(
-                            viewBlogFields = BlogViewState.ViewBlogFields(
-                                isAuthorOfBlogPost = isAuthor
-                            )
-                        ),
-                        response = null
-                    ))
+                    onCompleteJob(
+                        DataState.data(
+                            data = BlogViewState(
+                                viewBlogFields = BlogViewState.ViewBlogFields(
+                                    isAuthorOfBlogPost = isAuthor
+                                )
+                            ),
+                            response = null
+                        )
+                    )
                 }
             }
 
@@ -200,7 +204,7 @@ constructor(
         authToken: AuthToken,
         blogPost: BlogPost
     ): LiveData<DataState<BlogViewState>> {
-        return object: NetworkBoundResource<GenericResponse, BlogPost, BlogViewState>(
+        return object : NetworkBoundResource<GenericResponse, BlogPost, BlogViewState>(
             sessionManager.isConnectedToTheInternet(),
             true,
             true,
@@ -252,9 +256,84 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                addJob("deleteBlogPost", job )
+                addJob("deleteBlogPost", job)
             }
         }.asLiveData()
+    }
+
+    fun updateBlogPost(
+        authToken: AuthToken,
+        slug: String,
+        title: RequestBody,
+        body: RequestBody,
+        image: MultipartBody.Part?
+    ): LiveData<DataState<BlogViewState>> {
+        return object : NetworkBoundResource<BlogCreateUpdateResponse, BlogPost, BlogViewState>(
+            sessionManager.isConnectedToTheInternet(),
+            true,
+            true,
+            false
+        ) {
+            // not applicable
+            override suspend fun createCasheRequestAndReturn() {
+
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<BlogCreateUpdateResponse>) {
+                val updatedBlogPost = BlogPost(
+                    response.body.pk,
+                    response.body.title,
+                    response.body.slug,
+                    response.body.body,
+                    response.body.image,
+                    DateUtils.convertServerStringDateToLong(response.body.date_updated),
+                    response.body.username
+                )
+
+                updateLocalDb(updatedBlogPost)
+
+                withContext(Main) {
+                    onCompleteJob(
+                        DataState.data(
+                            data = BlogViewState(
+                                viewBlogFields = BlogViewState.ViewBlogFields(
+                                    blogPost = updatedBlogPost
+                                )
+                            ),
+                            response = Response(response.body.response, ResponseType.Toast())
+                        )
+                    )
+                }
+
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<BlogCreateUpdateResponse>> {
+                return openApiMainService.updateBlog(
+                    "Token ${authToken.token}", slug, title, body, image
+                )
+            }
+
+            override fun loadFromCache(): LiveData<BlogViewState> {
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: BlogPost?) {
+                cacheObject?.let { blogPost ->
+                    blogPostDao.updateBlogPost(
+                        blogPost.pk,
+                        blogPost.title,
+                        blogPost.body,
+                        blogPost.image
+                    )
+                }
+            }
+
+            override fun setJob(job: Job) {
+                addJob("updateBlogPost", job)
+            }
+
+        }.asLiveData()
+
     }
 }
 
