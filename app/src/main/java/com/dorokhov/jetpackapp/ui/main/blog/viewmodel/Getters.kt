@@ -1,5 +1,6 @@
 package com.dorokhov.jetpackapp.ui.main.blog.viewmodel
 
+import android.net.Uri
 import com.dorokhov.jetpackapp.models.BlogPost
 
 fun BlogViewModel.getSlug(): String {
@@ -59,6 +60,15 @@ fun BlogViewModel.getBlogPost(): BlogPost {
               it
         }?: getDummyBlogPost()
     }
+}
+
+fun BlogViewModel.getUpdateBlogUri(): Uri? {
+    getCurrentNewStateOrNew().let {
+        it.updateBlogFields.updatedImageUri?.let {
+            return it
+        }
+    }
+    return null
 }
 
 fun BlogViewModel.getDummyBlogPost(): BlogPost {

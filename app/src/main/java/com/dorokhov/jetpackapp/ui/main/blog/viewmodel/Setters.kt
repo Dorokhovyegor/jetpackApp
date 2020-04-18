@@ -83,3 +83,26 @@ fun BlogViewModel.setUpdateBlogFields(
     update.updateBlogFields = updateBlogFields
     setViewState(update)
 }
+
+fun BlogViewModel.updateListItem(blogPost: BlogPost) {
+    val update = getCurrentNewStateOrNew()
+    val list = update.blogFields.blogList.toMutableList()
+
+    for (i in 0..(list.size - 1)) {
+        if (list[i].pk == blogPost.pk) {
+            list[i] = blogPost
+            break
+        }
+    }
+    update.blogFields.blogList = list
+    setViewState(update)
+}
+
+fun BlogViewModel.onBlogPostUpdateSuccess(blogPost: BlogPost) {
+    setUpdateBlogFields(
+        uri = null, title = blogPost.title, body = blogPost.body
+    )
+    // update UpdateBlogFragment
+    setBlogPost(blogPost)
+    updateListItem(blogPost)
+}

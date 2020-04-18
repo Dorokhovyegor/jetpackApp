@@ -4,9 +4,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.dorokhov.jetpackapp.R
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogStateEvent
 import com.dorokhov.jetpackapp.ui.main.blog.state.BlogViewState
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.onBlogPostUpdateSuccess
+import com.dorokhov.jetpackapp.ui.main.blog.viewmodel.setUpdateBlogFields
 import kotlinx.android.synthetic.main.fragment_update_blog.*
 import okhttp3.MultipartBody
 
@@ -34,6 +37,9 @@ class  UpdateBlogFragment : BaseBlogFragment(){
                 data.data?.getContentIfNotHandled()?.let { blogViewState ->
                     blogViewState.viewBlogFields.blogPost?.let { blogPost ->
                         // успешно обновили пост
+                        viewModel.onBlogPostUpdateSuccess(blogPost).let {
+                            findNavController().popBackStack()
+                        }
                     }
                 }
             }
@@ -85,4 +91,14 @@ class  UpdateBlogFragment : BaseBlogFragment(){
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.setUpdateBlogFields(
+            uri = null,
+            title = blog_title.text.toString(),
+            body = blog_body.text.toString()
+        )
+    }
 }
+
