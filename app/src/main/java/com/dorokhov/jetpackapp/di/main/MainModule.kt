@@ -6,6 +6,7 @@ import com.dorokhov.jetpackapp.persistance.AppDatabase
 import com.dorokhov.jetpackapp.persistance.BlogPostDao
 import com.dorokhov.jetpackapp.repository.main.AccountRepository
 import com.dorokhov.jetpackapp.repository.main.BlogRepository
+import com.dorokhov.jetpackapp.repository.main.CreateBlogRepository
 import com.dorokhov.jetpackapp.session.SessionManager
 import dagger.Module
 import dagger.Provides
@@ -48,6 +49,16 @@ class MainModule {
         sessionManager: SessionManager
     ): BlogRepository {
         return BlogRepository(openApiMainService, blogPostDao, sessionManager)
+    }
+
+    @MainScope
+    @Provides
+    fun provideCreateBlogRepository(
+        openApiMainService: OpenApiMainService,
+        blogPostDao: BlogPostDao,
+        sessionManager: SessionManager
+    ): CreateBlogRepository {
+        return CreateBlogRepository(openApiMainService, blogPostDao, sessionManager)
     }
 
 
